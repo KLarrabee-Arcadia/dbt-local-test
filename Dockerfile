@@ -11,4 +11,4 @@ RUN pip install pytz==2024.1 dbt-postgres==1.3.1
 
 # Install dbt dependencies (as specified in packages.yml file)
 # Build seeds, models and snapshots (and run tests wherever applicable)
-CMD dbt deps && dbt build --profiles-dir profiles && sleep infinity
+CMD dbt deps && dbt build --profiles-dir profiles
