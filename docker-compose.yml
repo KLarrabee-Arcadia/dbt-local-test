@@ -1,22 +1,26 @@
 version: "3.9"
 
 services:
-  postgres:
-    image: frantiseks/postgres-sakila
+  spark-hudi:
+    build: ./dockerfiles/hudi
+    environment:
+      # SPARK_HOME is not just used in the dockerfile, it's for Spark itself,
+      # and it needs to be set to where Spark is set up in the base image
+      SPARK_HOME: /opt/spark
+      # SPARK_MASTER_NAME is the domain that Spark is running on, which should
+      # match the docker compose service name
+      SPARK_MASTER_NAME: spark-hudi
+      SPARK_APPLICATIONS_HOME: /opt/spark-apps
+      SPARK_MASTER_PORT: 7077
+      SPARK_MASTER_LOG: /spark/logs
     ports:
-      - '5555:5432'
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - "5555:7077"
+      - "10000:10000"
 
-  dbt:
-    container_name: dbt
-    build: .
-    image: dbt-dummy
+  dbt-spark:
+    build:
+      context: ./dbt_spark_example/
+      dockerfile: ../dockerfiles/dbt/Dockerfile
     volumes:
-      - ./:/usr/src/app
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - ./dbt_spark_example/:/usr/src/app
+    # command: sleep infinity
