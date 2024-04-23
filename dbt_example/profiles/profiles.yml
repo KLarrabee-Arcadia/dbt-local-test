@@ -8,5 +8,5 @@ dbt_example:
       password: postgres
       port: 5432
       dbname: postgres
-      schema: public
+      schema: dbt
       threads: 1
