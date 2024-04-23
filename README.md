@@ -48,3 +48,10 @@ dbt-elt-example-dbt-spark-1  | 20:26:01
 dbt-elt-example-dbt-spark-1  | 20:26:01  Done. PASS=7 WARN=0 ERROR=0 SKIP=0 TOTAL=7
 dbt-elt-example-dbt-spark-1 exited with code 0
 ```
+
+The `dbt_spark_example` file structure was originally created (when this previously had `dbt-core` and `dbt-spark` installed in a
+Poetry virtualenv) via:
+
+```bash
+❯ poetry run dbt init dbt_spark
+```
