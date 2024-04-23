@@ -15,6 +15,7 @@ services:
       SPARK_MASTER_LOG: /spark/logs
     ports:
       - "5555:7077"
+      - "10000:10000"
 
   dbt-spark:
     build:
