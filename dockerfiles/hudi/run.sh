@@ -1,31 +1,25 @@
 #!/bin/bash
 
-export SPARK_VERSION=3.4
+# Start Derby server
+#
+# `startNetworkServer` doesn't appear to be able to be sent to the background with `&`
+# so using `nohup` appears to be necessary. The main downside is that this redirects
+# output so docker logs will not show it.
+$DERBY_HOME/bin/startNetworkServer -h 0.0.0.0 &
 
-# This will download the hudi-spark3.4 bundle
-${SPARK_HOME}/bin/spark-shell \
-    --packages org.apache.hudi:hudi-spark${SPARK_VERSION}-bundle_2.12:0.14.1                 \
-    --conf 'spark.serializer=org.apache.spark.serializer.KryoSerializer'                     \
-    --conf 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog' \
-    --conf 'spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension'      \
-    --conf 'spark.kryo.registrator=org.apache.spark.HoodieSparkKryoRegistrar'                \
-    || exit 1
+# Start Thrift server pointing to Derby backend
+$SPARK_HOME/sbin/start-thriftserver.sh \
+--conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+--conf spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension \
+--conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.hudi.catalog.HoodieCatalog \
+--conf spark.sql.warehouse.dir=/tmp/hudi/hive/warehouse \
+--hiveconf hive.metastore.warehouse.dir=/tmp/hudi/hive/warehouse \
+--hiveconf hive.metastore.schema.verification=false \
+--hiveconf datanucleus.schema.autoCreateAll=true \
+--hiveconf javax.jdo.option.ConnectionDriverName=org.apache.derby.jdbc.ClientDriver \
+--hiveconf 'javax.jdo.option.ConnectionURL=jdbc:derby://localhost:1527/default;create=true' \
+&
 
-# Start Spark master and worker
-${SPARK_HOME}/bin/spark-class \
-    org.apache.spark.deploy.master.Master \
-    --ip $SPARK_MASTER_NAME               \
-    --port $SPARK_MASTER_PORT             \
-    --webui-port 8080                     \
-    &
+wait -n
 
-${SPARK_HOME}/bin/spark-class \
-    org.apache.spark.deploy.worker.Worker         \
-    spark://$SPARK_MASTER_NAME:$SPARK_MASTER_PORT \
-    --webui-port 8081                             \
-    &
-
-# Start Thrift server for connecting to Spark cluster with DBT
-${SPARK_HOME}/sbin/start-thriftserver.sh
-
-wait
+sleep infinity

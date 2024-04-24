@@ -13,6 +13,11 @@ services:
       SPARK_APPLICATIONS_HOME: /opt/spark-apps
       SPARK_MASTER_PORT: 7077
       SPARK_MASTER_LOG: /spark/logs
+      DERBY_VERSION: 10.14.2.0
+      DERBY_HOME: /opt/db-derby-10.14.2.0-bin
+      SPARK_VERSION: 3.4.0
+    # command: sleep infinity
+
     ports:
       - "5555:7077"
       - "8080:8080"
@@ -24,4 +29,3 @@ services:
       dockerfile: ../dockerfiles/dbt/Dockerfile
     volumes:
       - ./dbt_spark_example/:/usr/src/app
-    # command: sleep infinity
