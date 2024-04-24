@@ -6,5 +6,5 @@ dbt_spark_example:
       method: thrift
       host: spark-hudi
       port: 10000
-      schema: dbt
+      schema: hudi_dbt
       threads: 1
