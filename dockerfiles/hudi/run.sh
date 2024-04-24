@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Start Derby server for the Hive metastore
-$DERBY_HOME/bin/startNetworkServer -h 0.0.0.0 &
+$DERBY_HOME/bin/startNetworkServer &
 
 # Start Thrift server pointing to Derby backend for the metastore
 # and to hudi for the warehouse
