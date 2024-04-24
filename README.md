@@ -1,6 +1,9 @@
 # dbt example
 
 This is an example of a fully local setup using Docker to run dbt tests against a hudi backend.
+It includes first seeding data from a CSV into a table and then creating a model that references the seeded table.
+
+## Setup
 
 First run Derby/Hudi (along with the Thrift server for dbt to authenticate against):
 
