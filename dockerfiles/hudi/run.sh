@@ -5,7 +5,7 @@
 # `startNetworkServer` doesn't appear to be able to be sent to the background with `&`
 # so using `nohup` appears to be necessary. The main downside is that this redirects
 # output so docker logs will not show it.
-nohup $DERBY_HOME/bin/startNetworkServer -h 0.0.0.0 &
+$DERBY_HOME/bin/startNetworkServer -h 0.0.0.0 &
 
 # Start Thrift server pointing to Derby backend
 $SPARK_HOME/sbin/start-thriftserver.sh \
@@ -17,6 +17,9 @@ $SPARK_HOME/sbin/start-thriftserver.sh \
 --hiveconf hive.metastore.schema.verification=false \
 --hiveconf datanucleus.schema.autoCreateAll=true \
 --hiveconf javax.jdo.option.ConnectionDriverName=org.apache.derby.jdbc.ClientDriver \
---hiveconf 'javax.jdo.option.ConnectionURL=jdbc:derby://localhost:1527/default;create=true'
+--hiveconf 'javax.jdo.option.ConnectionURL=jdbc:derby://localhost:1527/default;create=true' \
+&
+
+wait -n
 
 sleep infinity

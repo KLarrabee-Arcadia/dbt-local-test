@@ -29,4 +29,3 @@ services:
       dockerfile: ../dockerfiles/dbt/Dockerfile
     volumes:
       - ./dbt_spark_example/:/usr/src/app
-    # command: sleep infinity

@@ -26,7 +26,7 @@ RUN cp $DERBY_HOME/lib/derby.jar       $SPARK_HOME/jars/
 RUN cp $DERBY_HOME/lib/derbyclient.jar $SPARK_HOME/jars/
 
 # Copy the entrypoint script which will spin up the Derby & Thrift servers
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY run.sh /run.sh
+RUN chmod +x /run.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/run.sh"]
