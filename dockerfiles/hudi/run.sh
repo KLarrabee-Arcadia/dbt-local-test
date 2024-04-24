@@ -1,13 +1,10 @@
 #!/bin/bash
 
-# Start Derby server
-#
-# `startNetworkServer` doesn't appear to be able to be sent to the background with `&`
-# so using `nohup` appears to be necessary. The main downside is that this redirects
-# output so docker logs will not show it.
+# Start Derby server for the Hive metastore
 $DERBY_HOME/bin/startNetworkServer -h 0.0.0.0 &
 
-# Start Thrift server pointing to Derby backend
+# Start Thrift server pointing to Derby backend for the metastore
+# and to hudi for the warehouse
 $SPARK_HOME/sbin/start-thriftserver.sh \
 --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
 --conf spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension \
