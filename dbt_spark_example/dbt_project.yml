@@ -37,3 +37,5 @@ clean-targets:         # directories to be removed by `dbt clean`
 #       +materialized: view
 models:
    +file_format: hudi
+   int_customers_per_store:
+     +materialized: table
