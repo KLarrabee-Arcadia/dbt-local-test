@@ -1,8 +1,9 @@
 version: "3.9"
 
 services:
-  spark-hudi:
-    build: ./dockerfiles/hudi
+  hudi:
+    build: ./.docker/hudi
+    command: /usr/local/bin/run.sh
     environment:
       # SPARK_HOME is not just used in the dockerfile, it's for Spark itself,
       # and it needs to be set to where Spark is set up in the base image
@@ -16,16 +17,17 @@ services:
       DERBY_VERSION: 10.14.2.0
       DERBY_HOME: /opt/db-derby-10.14.2.0-bin
       SPARK_VERSION: 3.4.0
-    # command: sleep infinity
-
     ports:
       - "5555:7077"
       - "8080:8080"
       - "10000:10000"
+    volumes:
+      - ./.docker/hudi/data:/usr/local/data
+      - ./.docker/hudi/run.sh:/usr/local/bin/run.sh
 
-  dbt-spark:
+  dbt:
     build:
       context: ./dbt_spark_example/
-      dockerfile: ../dockerfiles/dbt/Dockerfile
+      dockerfile: ../.docker/dbt/Dockerfile
     volumes:
       - ./dbt_spark_example/:/usr/src/app

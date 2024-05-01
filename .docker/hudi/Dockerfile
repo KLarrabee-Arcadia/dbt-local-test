@@ -25,8 +25,6 @@ RUN wget https://repository.apache.org/content/repositories/releases/org/apache/
 RUN cp $DERBY_HOME/lib/derby.jar       $SPARK_HOME/jars/
 RUN cp $DERBY_HOME/lib/derbyclient.jar $SPARK_HOME/jars/
 
-# Copy the entrypoint script which will spin up the Derby & Thrift servers
-COPY run.sh /run.sh
-RUN chmod +x /run.sh
+RUN pip3 install pyspark==3.4.0
 
-CMD ["/run.sh"]
+CMD ["sleep", "infinity"]

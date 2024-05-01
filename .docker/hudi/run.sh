@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Start Spark Master for pyspark to insert data through
+$SPARK_HOME/bin/spark-class \
+    org.apache.spark.deploy.master.Master \
+    --ip $SPARK_MASTER_NAME \
+    --port $SPARK_MASTER_PORT \
+    --webui-port 8080 \
+    &
+
 # Start Derby server for the Hive metastore
 $DERBY_HOME/bin/startNetworkServer &
 
@@ -19,4 +27,7 @@ $SPARK_HOME/sbin/start-thriftserver.sh \
 
 wait -n
 
+python3 /usr/local/data/load.py || exit 1
+
+echo "Waiting..."
 sleep infinity
