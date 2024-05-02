@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Start Derby server for the Hive metastore
+# Start Derby database server to act as the metastore
 $DERBY_HOME/bin/startNetworkServer &
 
 # Start Thrift server pointing to Derby backend for the metastore
-# and to hudi for the warehouse
+# and to Hudi warehouse
 $SPARK_HOME/sbin/start-thriftserver.sh \
 --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
 --conf spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension \
@@ -19,4 +19,7 @@ $SPARK_HOME/sbin/start-thriftserver.sh \
 
 wait -n
 
+python3 /usr/local/data/load.py || exit 1
+
+echo "Waiting..."
 sleep infinity
