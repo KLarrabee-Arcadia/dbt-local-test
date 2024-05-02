@@ -1,18 +1,10 @@
 #!/bin/bash
 
-# Start Spark Master for pyspark to insert data through
-$SPARK_HOME/bin/spark-class \
-    org.apache.spark.deploy.master.Master \
-    --ip $SPARK_MASTER_NAME \
-    --port $SPARK_MASTER_PORT \
-    --webui-port 8080 \
-    &
-
-# Start Derby server for the Hive metastore
+# Start Derby database server to act as the metastore
 $DERBY_HOME/bin/startNetworkServer &
 
 # Start Thrift server pointing to Derby backend for the metastore
-# and to hudi for the warehouse
+# and to Hudi warehouse
 $SPARK_HOME/sbin/start-thriftserver.sh \
 --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
 --conf spark.sql.extensions=org.apache.spark.sql.hudi.HoodieSparkSessionExtension \
