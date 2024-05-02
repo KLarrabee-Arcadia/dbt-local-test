@@ -7,67 +7,76 @@ It includes first seeding data from a CSV into a table and then creating a model
 
 First run Derby/Hudi (along with the Thrift server for dbt to authenticate against):
 
+First, run the `hudi` service. This includes Spark, a Derby server,
+and a Thrift server configured to use Derby as its metastore and Hudi
+as its warehouse.
+
 ```bash
-❯ docker compose up -d spark-hudi
+❯ docker compose up -d hudi
 ```
 
-Then run DBT tests using Spark as the backend:
+> This will additionally create a `hudi_sources.payment` table and seed it with
+> a few hundred records, to aid in testing DBT models configured against external sources.
+
+
+Next DBT tests:
 
 ```bash
-❯ docker compose up dbt-spark
-
+❯ docker compose up dbt
 [+] Running 1/0
- ✔ Container dbt-elt-example-dbt-spark-1  Created                                                                                                                0.0s
-Attaching to dbt-elt-example-dbt-spark-1
-dbt-elt-example-dbt-spark-1  | 19:42:44  Running with dbt=1.7.10
-dbt-elt-example-dbt-spark-1  | 19:42:44  Warning: No packages were found in packages.yml
-dbt-elt-example-dbt-spark-1  | 19:42:44  Warning: No packages were found in packages.yml
-dbt-elt-example-dbt-spark-1  | 19:42:45  Running with dbt=1.7.10
-dbt-elt-example-dbt-spark-1  | 19:42:45  Registered adapter: spark=1.7.1
-dbt-elt-example-dbt-spark-1  | 19:42:45  Found 1 model, 1 seed, 5 tests, 0 sources, 0 exposures, 0 metrics, 439 macros, 0 groups, 0 semantic models
-dbt-elt-example-dbt-spark-1  | 19:42:45
-dbt-elt-example-dbt-spark-1  | 19:42:47  Concurrency: 1 threads (target='dev')
-dbt-elt-example-dbt-spark-1  | 19:42:47
-dbt-elt-example-dbt-spark-1  | 19:42:47  1 of 7 START seed file hudi_dbt.customer_base .................................. [RUN]
-dbt-elt-example-dbt-spark-1  | 19:42:50  1 of 7 OK loaded seed file hudi_dbt.customer_base .............................. [INSERT 599 in 3.38s]
-dbt-elt-example-dbt-spark-1  | 19:42:50  2 of 7 START test not_null_customer_base_customer_id ........................... [RUN]
-dbt-elt-example-dbt-spark-1  | 19:42:56  2 of 7 PASS not_null_customer_base_customer_id ................................. [PASS in 5.59s]
-dbt-elt-example-dbt-spark-1  | 19:42:56  3 of 7 START test not_null_customer_base_store_id .............................. [RUN]
-dbt-elt-example-dbt-spark-1  | 19:42:56  3 of 7 PASS not_null_customer_base_store_id .................................... [PASS in 0.20s]
-dbt-elt-example-dbt-spark-1  | 19:42:56  4 of 7 START sql view model hudi_dbt.int_customers_per_store ................... [RUN]
-dbt-elt-example-dbt-spark-1  | 19:42:56  4 of 7 OK created sql view model hudi_dbt.int_customers_per_store .............. [OK in 0.14s]
-dbt-elt-example-dbt-spark-1  | 19:42:56  5 of 7 START test not_null_int_customers_per_store_store_id .................... [RUN]
-dbt-elt-example-dbt-spark-1  | 19:42:56  5 of 7 PASS not_null_int_customers_per_store_store_id .......................... [PASS in 0.31s]
-dbt-elt-example-dbt-spark-1  | 19:42:56  6 of 7 START test not_null_int_customers_per_store_total_customers ............. [RUN]
-dbt-elt-example-dbt-spark-1  | 19:42:56  6 of 7 PASS not_null_int_customers_per_store_total_customers ................... [PASS in 0.16s]
-dbt-elt-example-dbt-spark-1  | 19:42:56  7 of 7 START test unique_int_customers_per_store_store_id ...................... [RUN]
-dbt-elt-example-dbt-spark-1  | 19:42:57  7 of 7 PASS unique_int_customers_per_store_store_id ............................ [PASS in 0.33s]
-dbt-elt-example-dbt-spark-1  | 19:43:02
-dbt-elt-example-dbt-spark-1  | 19:43:02  Finished running 1 seed, 5 tests, 1 view model in 0 hours 0 minutes and 16.84 seconds (16.84s).
-dbt-elt-example-dbt-spark-1  | 19:43:02
-dbt-elt-example-dbt-spark-1  | 19:43:02  Completed successfully
-dbt-elt-example-dbt-spark-1  | 19:43:02
-dbt-elt-example-dbt-spark-1  | 19:43:02  Done. PASS=7 WARN=0 ERROR=0 SKIP=0 TOTAL=7
-dbt-elt-example-dbt-spark-1 exited with code 0
+ ✔ Container dbt-elt-example-dbt-1  Created                                                                                                           0.0s
+Attaching to dbt-elt-example-dbt-1
+dbt-elt-example-dbt-1  | 17:42:27  Running with dbt=1.7.10
+dbt-elt-example-dbt-1  | 17:42:27  Warning: No packages were found in packages.yml
+dbt-elt-example-dbt-1  | 17:42:27  Warning: No packages were found in packages.yml
+dbt-elt-example-dbt-1  | 17:42:28  Running with dbt=1.7.10
+dbt-elt-example-dbt-1  | 17:42:28  Registered adapter: spark=1.7.1
+dbt-elt-example-dbt-1  | 17:42:28  [WARNING]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+dbt-elt-example-dbt-1  | There are 1 unused configuration paths:
+dbt-elt-example-dbt-1  | - models.int_customers_per_store
+dbt-elt-example-dbt-1  | 17:42:28  Found 2 models, 1 seed, 8 tests, 1 source, 0 exposures, 0 metrics, 439 macros, 0 groups, 0 semantic models
+dbt-elt-example-dbt-1  | 17:42:28
+dbt-elt-example-dbt-1  | 17:42:30  Concurrency: 1 threads (target='dev')
+dbt-elt-example-dbt-1  | 17:42:30
+dbt-elt-example-dbt-1  | 17:42:30  1 of 11 START sql view model hudi_dbt.stg_payment .............................. [RUN]
+dbt-elt-example-dbt-1  | 17:42:30  1 of 11 OK created sql view model hudi_dbt.stg_payment ......................... [OK in 0.43s]
+dbt-elt-example-dbt-1  | 17:42:30  2 of 11 START seed file hudi_dbt.customer_base ................................. [RUN]
+dbt-elt-example-dbt-1  | 17:42:38  2 of 11 OK loaded seed file hudi_dbt.customer_base ............................. [INSERT 599 in 8.13s]
+dbt-elt-example-dbt-1  | 17:42:38  3 of 11 START test not_null_stg_payment_customer_id ............................ [RUN]
+dbt-elt-example-dbt-1  | 17:42:39  3 of 11 PASS not_null_stg_payment_customer_id .................................. [PASS in 0.63s]
+dbt-elt-example-dbt-1  | 17:42:39  4 of 11 START test not_null_stg_payment_payment_id ............................. [RUN]
+dbt-elt-example-dbt-1  | 17:42:39  4 of 11 PASS not_null_stg_payment_payment_id ................................... [PASS in 0.19s]
+dbt-elt-example-dbt-1  | 17:42:39  5 of 11 START test unique_stg_payment_payment_id ............................... [RUN]
+dbt-elt-example-dbt-1  | 17:42:39  5 of 11 PASS unique_stg_payment_payment_id ..................................... [PASS in 0.44s]
+dbt-elt-example-dbt-1  | 17:42:39  6 of 11 START test not_null_customer_base_customer_id .......................... [RUN]
+dbt-elt-example-dbt-1  | 17:42:40  6 of 11 PASS not_null_customer_base_customer_id ................................ [PASS in 0.22s]
+dbt-elt-example-dbt-1  | 17:42:40  7 of 11 START test not_null_customer_base_store_id ............................. [RUN]
+dbt-elt-example-dbt-1  | 17:42:40  7 of 11 PASS not_null_customer_base_store_id ................................... [PASS in 0.17s]
+dbt-elt-example-dbt-1  | 17:42:40  8 of 11 START sql view model hudi_dbt.int_customers_per_store .................. [RUN]
+dbt-elt-example-dbt-1  | 17:42:40  8 of 11 OK created sql view model hudi_dbt.int_customers_per_store ............. [OK in 0.10s]
+dbt-elt-example-dbt-1  | 17:42:40  9 of 11 START test not_null_int_customers_per_store_store_id ................... [RUN]
+dbt-elt-example-dbt-1  | 17:42:40  9 of 11 PASS not_null_int_customers_per_store_store_id ......................... [PASS in 0.21s]
+dbt-elt-example-dbt-1  | 17:42:40  10 of 11 START test not_null_int_customers_per_store_total_customers ........... [RUN]
+dbt-elt-example-dbt-1  | 17:42:40  10 of 11 PASS not_null_int_customers_per_store_total_customers ................. [PASS in 0.15s]
+dbt-elt-example-dbt-1  | 17:42:40  11 of 11 START test unique_int_customers_per_store_store_id .................... [RUN]
+dbt-elt-example-dbt-1  | 17:42:40  11 of 11 PASS unique_int_customers_per_store_store_id .......................... [PASS in 0.23s]
+dbt-elt-example-dbt-1  | 17:42:46
+dbt-elt-example-dbt-1  | 17:42:46  Finished running 2 view models, 1 seed, 8 tests in 0 hours 0 minutes and 17.52 seconds (17.52s).
+dbt-elt-example-dbt-1  | 17:42:46
+dbt-elt-example-dbt-1  | 17:42:46  Completed successfully
+dbt-elt-example-dbt-1  | 17:42:46
+dbt-elt-example-dbt-1  | 17:42:46  Done. PASS=11 WARN=0 ERROR=0 SKIP=0 TOTAL=11
+dbt-elt-example-dbt-1 exited with code 0
 ```
-
-The `dbt_spark_example` file structure was originally created (when this previously had `dbt-core` and `dbt-spark` installed in a
-Poetry virtualenv) via:
-
-```bash
-❯ poetry run dbt init dbt_spark
-```
-
-Much of the Dockerfile & `run.sh` script effectively came from: https://github.com/apache/hudi/blob/master/hudi-examples/hudi-examples-dbt/README.md
 
 ## Testing
 
-After running the `dbt` tests, you can inspect the Hudi tables manually inside the running `spark_hudi` service.
+After running the `dbt` tests, you can inspect the Hudi tables manually inside the running `hudi` service.
 
 1. `exec` into the running container:
 
 ```bash
-❯ docker exec -it $(docker ps | grep spark-hudi | awk '{print $1}') /bin/bash
+❯ docker exec -it $(docker ps | grep hudi | awk '{print $1}') /bin/bash
 ```
 
 2. Run `beeline` to enter its interactive prompt:
